@@ -1,0 +1,4 @@
+slave address: 110101xb (where x represents hi/lo value of SDO/SA0 pin)
+				(7 bit address)
+
+see page 53
