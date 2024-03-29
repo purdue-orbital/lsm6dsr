@@ -2,6 +2,13 @@
 name = "lsm6dsr"
 version = "0.1.0"
 edition = "2021"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/purdue-orbital/lsm6dsr"
+authors = [
+	"Alex Janninck <alexjanninck@gmail.com>",
+	"Jack Hogan <jackhogan11@gmail.com>"
+]
+description = "Rust i2c interface for the LSM6DSR accelerometer and gyroscope from STMicroelectronics"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
