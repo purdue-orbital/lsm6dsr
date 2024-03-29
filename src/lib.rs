@@ -5,6 +5,7 @@ use glam::i16::I16Vec3;
 mod commands;
 pub mod accelerometer;
 pub mod gyroscope;
+pub use glam::DVec3;
 
 use accelerometer::AccelScale;
 use gyroscope::GyroScale;
