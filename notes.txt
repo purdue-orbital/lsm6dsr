@@ -2,3 +2,42 @@ slave address: 110101xb (where x represents hi/lo value of SDO/SA0 pin)
 				(7 bit address)
 
 see page 53
+
+Accelerometer registers:
+	CTRL1_XL (10h) (page 51)
+	CTRL6_C (15h) // accel perf mode
+	CTRL8_XL (17h) // filter stuff
+	OUTX_L_A (28h), OUTX_H_A (29h) // x axis acceleration
+	OUTY_L_A (2Ah), OUTY_H_A (2Bh) // y axis acceleration
+	OUTZ_L_A (2Ch), OUTZ_H_A (2Dh) // z axis acceleration
+	X_OFS_USR (73h), Y_OFS_USR (74h), Z_OFS_USR (75h) // xyz axis acceleration correction
+
+Gyro registers:
+	CTRL2_G (11h) (page 52)
+	CTRL4_C (13h)
+	CTRL5_C (14h) // self test stuff
+	CTRL6_C (15h) // gyro low pass filter
+	CTRL7_G (16h) // high pass filter? and perf mode
+	OUTX_L_G (22h), OUTX_H_G (23h) // x axis angular rate
+	OUTY_L_G (24h), OUTY_H_G (25h) // y axis angular rate
+	OUTZ_L_G (26h), OUTZ_H_G (27h) // z axis angular rate
+
+other r/w registers:
+	CTRL9_XL (18h) // dis/enable i3c (not i2c) RECOMAENDED TO DISABLE!!!
+	CTRL10_C (19h) // timestamp dis/enable (see registers 40h-43h)
+
+important read only registers:
+	STATUS_REG (1Eh) // info about if new temp/accel/gyro data avalible
+	OUT_TEMP_L (20h), OUT_TEMP_H (21h) // two’s complement sign extended on the MSB.
+	TIMESTAMP0 (40h) ... TIMESTAMP3 (43h) // 1 = 25 microseconds (see note on page 73)
+
+maybe important registers:
+	S4S_TPH_L (04h)
+	INTERNAL_FREQ_FINE (63h) // something about ODR
+
+important defaults:
+	XL_HM_MODE = 0 (in 15h) // accel default to hi perf mode
+	G_HM_MODE = 0 (in 16h) // gyro default to hi perf mode
+	ODR_G[3:0] = 0000 (in 11h) // gyro powered down
+	I3C_disable = 0 // i3c default enabled
+	TIMESTAMP_EN = 0 // timestamping disabled
