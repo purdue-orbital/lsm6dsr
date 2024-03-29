@@ -47,6 +47,14 @@ impl AccelScale {
 			AccelScale::Scale16 => 0.488,
 		}
 	}
+
+	/// converts a raw `i16` measured with the given scale to Gs
+	#[inline]
+	pub fn convert(self, raw: i16) -> f64 {
+		let val = raw as f64;
+
+		val * self.coefficient() / 1000.0
+	}
 }
 
 #[repr(u8)]

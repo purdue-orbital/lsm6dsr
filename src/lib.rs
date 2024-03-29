@@ -1,5 +1,7 @@
 use embedded_hal::i2c::I2c;
 
+use glam::i16::I16Vec3;
+
 mod commands;
 pub mod accelerometer;
 pub mod gyroscope;
@@ -84,11 +86,26 @@ impl<I2C: I2c> Lsm6dsr<I2C> {
 		Ok(buf[0])
 	}
 
-	/// Where `register` is the low byte of the i16, and `register + 1` is the high byte
+	/// read a single `i16` from the given register where
+	/// `register` is the low byte of the i16, and `register + 1` is the high byte
 	fn read_i16(&mut self, register: u8) -> Result<i16, I2C::Error> {
 		let mut buf = [0x00; 2];
 		self.read_buf(register, &mut buf)?;
 
 		Ok(i16::from_le_bytes(buf))
+	}
+
+	/// read 3 `i16`s from the given register where `register` is the low byte of the
+	/// first i16, `register + 1` is the high byte,
+	/// `register + 2` is the low byte of the second i16, and so on.
+	fn read_trio_i16(&mut self, register: u8) -> Result<I16Vec3, I2C::Error> {
+		let mut buf = [0x00; 6];
+		self.read_buf(register, &mut buf)?;
+
+		let x = i16::from_le_bytes([buf[0], buf[1]]);
+		let y = i16::from_le_bytes([buf[2], buf[3]]);
+		let z = i16::from_le_bytes([buf[4], buf[5]]);
+
+		Ok(I16Vec3::new(x, y, z))
 	}
 }
