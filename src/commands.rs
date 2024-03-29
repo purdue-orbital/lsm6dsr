@@ -42,7 +42,7 @@ impl<I2C: I2c> Lsm6dsr<I2C> {
 	fn convert_temp(raw_temp: i16) -> f32 {
 		let temp = raw_temp as f32;
 
-		(temp / 16.0) + 25.0
+		(temp / 256.0) + 25.0
 	}
 
 	/// get acceleration in the x axis in Gs
