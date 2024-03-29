@@ -1,5 +1,6 @@
 #[repr(u8)]
 #[derive(Debug, Clone, Copy)]
+// TODO: add 125 and 4000
 /// Gyroscope scale options (page 52)
 pub enum GyroScale {
 	/// ± 250 degrees per second
