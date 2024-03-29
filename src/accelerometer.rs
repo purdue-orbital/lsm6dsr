@@ -3,9 +3,13 @@
 #[derive(Debug, Clone, Copy)]
 /// Accelerometer scale options (page 51)
 pub enum AccelScale {
+	/// ± 2 g
 	Scale2 = 0,
+	/// ± 4 g
 	Scale4 = 2,
+	/// ± 8 g
 	Scale8 = 3,
+	/// ± 16 g
 	Scale16 = 1,
 }
 

@@ -2,8 +2,10 @@ use embedded_hal::i2c::{self, I2c};
 
 mod commands;
 pub mod accelerometer;
+pub mod gyroscope;
 
 use accelerometer::AccelScale;
+use gyroscope::GyroScale;
 
 // pub use commands::*;
 
@@ -11,7 +13,8 @@ use accelerometer::AccelScale;
 pub struct Lsm6dsr<I2C> {
 	i2c: I2C,
 	accel_scale: AccelScale,
-	accel_filtering: bool // page 51
+	accel_filtering: bool, // page 51
+	gyro_scale: GyroScale,
 }
 
 impl<I2C: I2c> Lsm6dsr<I2C> {
@@ -22,6 +25,7 @@ impl<I2C: I2c> Lsm6dsr<I2C> {
 			i2c,
 			accel_scale: AccelScale::Scale2,
 			accel_filtering: false,
+			gyro_scale: GyroScale::Scale250,
 		}
 	}
 
@@ -47,6 +51,12 @@ impl<I2C: I2c> Lsm6dsr<I2C> {
 	/// use `get_accel_scale` for that
 	pub fn accel_scale(&self) -> AccelScale {
 		self.accel_scale
+	}
+
+	/// value of `gyro_scale` feild. NOTE: doesn't ask the chip what the value is,
+	/// use `get_gyro_scale` for that
+	pub fn gyro_scale(&self) -> GyroScale {
+		self.gyro_scale
 	}
 
 	#[inline]

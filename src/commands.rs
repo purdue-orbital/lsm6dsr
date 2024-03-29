@@ -47,6 +47,13 @@ impl<I2C: I2c> Lsm6dsr<I2C> {
 		Ok(AccelScale::from_bits(bits))
 	}
 
+	/// reads the gyroscope scale from the chip
+	pub fn get_gyro_scale(&mut self) -> Result<GyroScale, I2C::Error> {
+		let bits = self.read_byte(0x11)?;
+
+		Ok(GyroScale::from_bits(bits))
+	}
+
 	/// changes the accelerometer scale of the chip, only updates `accel_scale` feild if successful
 	pub fn set_accel_scale(&mut self, scale: AccelScale) -> Result<(), I2C::Error> {
 		let mut bits = self.read_byte(0x10)?;
@@ -57,6 +64,20 @@ impl<I2C: I2c> Lsm6dsr<I2C> {
 
 		// make sure we only change the stored value after setting it incase there was an issue with i2c
 		self.accel_scale = scale;
+
+		Ok(())
+	}
+
+	/// changes the gyroscope scale of the chip, only updates `gyro_scale` feild if successful
+	pub fn set_gyro_scale(&mut self, scale: GyroScale) -> Result<(), I2C::Error> {
+		let mut bits = self.read_byte(0x11)?;
+		bits &= GyroScale::INVERSE_BIT_MASK; // set bits for scale to 0
+		bits |= scale.to_bits(); // set bits for scale to their value
+
+		self.write_byte(0x11, bits)?;
+
+		// make sure we only change the stored value after setting it incase there was an issue with i2c
+		self.gyro_scale = scale;
 
 		Ok(())
 	}
