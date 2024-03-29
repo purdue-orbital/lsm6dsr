@@ -2,7 +2,7 @@ use embedded_hal::i2c::I2c;
 
 use crate::Lsm6dsr;
 use crate::accelerometer::{AccelSampleRate, AccelScale};
-use crate::gyroscope::{GyroScale};
+use crate::gyroscope::{GyroSampleRate, GyroScale};
 
 impl<I2C: I2c> Lsm6dsr<I2C> {
 
@@ -87,6 +87,7 @@ impl<I2C: I2c> Lsm6dsr<I2C> {
 		Ok(())
 	}
 
+	/// turn on/off the accelerometer and set the sample rate
 	pub fn set_accel_sample_rate(&mut self, sample_rate: AccelSampleRate) -> Result<(), I2C::Error> {
 		let mut bits = self.read_byte(0x10)?;
 		bits &= AccelSampleRate::INVERSE_BIT_MASK;
@@ -95,8 +96,13 @@ impl<I2C: I2c> Lsm6dsr<I2C> {
 		self.write_byte(0x10, bits)
 	}
 
-	pub fn set_gyro_sample_rate(&mut self) -> Result<(), I2C::Error> {
-		todo!()
+	/// turn on/off the gyro and set the sample rate
+	pub fn set_gyro_sample_rate(&mut self, sample_rate: GyroSampleRate) -> Result<(), I2C::Error> {
+		let mut bits = self.read_byte(0x11)?;
+		bits &= GyroSampleRate::INVERSE_BIT_MASK;
+		bits |= sample_rate.to_bits();
+
+		self.write_byte(0x11, bits)
 	}
 
 	// TODO: remove
