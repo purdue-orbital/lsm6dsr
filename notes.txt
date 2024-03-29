@@ -4,7 +4,7 @@ slave address: 110101xb (where x represents hi/lo value of SDO/SA0 pin)
 see page 53
 
 Accelerometer registers:
-	CTRL1_XL (10h) (page 51)
+	CTRL1_XL (10h) (page 51) // accel scale and other settings
 	CTRL6_C (15h) // accel perf mode
 	CTRL8_XL (17h) // filter stuff
 	OUTX_L_A (28h), OUTX_H_A (29h) // x axis acceleration

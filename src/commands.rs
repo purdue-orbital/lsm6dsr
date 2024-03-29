@@ -29,14 +29,35 @@ impl<I2C: I2c> Lsm6dsr<I2C> {
 
 	/// get temperature in degrees celcius
 	pub fn get_temp(&mut self) -> Result<f32, I2C::Error> {
-		let mut buf = [0x00; 2];
+		let raw_temp = self.read_i16(0x20)?;
 
-		self.read_buf(0x20, &mut buf)?;
+		Ok(Self::convert_temp(raw_temp))
+	}
 
-		// convert using the correct byte order
-		let raw_temp = i16::from_le_bytes(buf) as f32;
-		let temperature = (raw_temp / 16.0) + 25.0;
+	fn convert_temp(raw_temp: i16) -> f32 {
+		let temp = raw_temp as f32;
 
-		Ok(temperature)
+		(temp / 16.0) + 25.0
+	}
+
+	/// reads the accelerometer scale from the chip
+	pub fn get_accel_scale(&mut self) -> Result<AccelScale, I2C::Error> {
+		let bits = self.read_byte(0x10)?;
+
+		Ok(AccelScale::from_bits(bits))
+	}
+
+	/// changes the accelerometer scale of the chip, only updates `accel_scale` feild if successful
+	pub fn set_accel_scale(&mut self, scale: AccelScale) -> Result<(), I2C::Error> {
+		let mut bits = self.read_byte(0x10)?;
+		bits &= AccelScale::INVERSE_BIT_MASK; // set bits for scale to 0
+		bits |= scale.to_bits(); // set bits for scale to their value
+
+		self.write_byte(0x10, bits)?;
+
+		// make sure we only change the stored value after setting it incase there was an issue with i2c
+		self.accel_scale = scale;
+
+		Ok(())
 	}
 }
