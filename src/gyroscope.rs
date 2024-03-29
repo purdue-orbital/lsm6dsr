@@ -95,3 +95,38 @@ impl GyroSampleRate {
 		}
 	}
 }
+
+use embedded_hal::i2c::I2c;
+use crate::Lsm6dsr;
+
+impl <I2C: I2c> Lsm6dsr<I2C> {
+	/// reads the gyroscope scale from the chip
+	pub fn get_gyro_scale(&mut self) -> Result<GyroScale, I2C::Error> {
+		let bits = self.read_byte(0x11)?;
+
+		Ok(GyroScale::from_bits(bits))
+	}
+
+	/// changes the gyroscope scale of the chip, only updates `gyro_scale` feild if successful
+	pub fn set_gyro_scale(&mut self, scale: GyroScale) -> Result<(), I2C::Error> {
+		let mut bits = self.read_byte(0x11)?;
+		bits &= GyroScale::INVERSE_BIT_MASK; // set bits for scale to 0
+		bits |= scale.to_bits(); // set bits for scale to their value
+
+		self.write_byte(0x11, bits)?;
+
+		// make sure we only change the stored value after setting it incase there was an issue with i2c
+		self.gyro_scale = scale;
+
+		Ok(())
+	}
+
+	/// turn on/off the gyro and set the sample rate
+	pub fn set_gyro_sample_rate(&mut self, sample_rate: GyroSampleRate) -> Result<(), I2C::Error> {
+		let mut bits = self.read_byte(0x11)?;
+		bits &= GyroSampleRate::INVERSE_BIT_MASK;
+		bits |= sample_rate.to_bits();
+
+		self.write_byte(0x11, bits)
+	}
+}

@@ -95,3 +95,38 @@ impl AccelSampleRate {
 		}
 	}
 }
+
+use embedded_hal::i2c::I2c;
+use crate::Lsm6dsr;
+
+impl <I2C: I2c> Lsm6dsr<I2C> {
+	/// reads the accelerometer scale from the chip
+	pub fn get_accel_scale(&mut self) -> Result<AccelScale, I2C::Error> {
+		let bits = self.read_byte(0x10)?;
+
+		Ok(AccelScale::from_bits(bits))
+	}
+
+	/// changes the accelerometer scale of the chip, only updates `accel_scale` feild if successful
+	pub fn set_accel_scale(&mut self, scale: AccelScale) -> Result<(), I2C::Error> {
+		let mut bits = self.read_byte(0x10)?;
+		bits &= AccelScale::INVERSE_BIT_MASK; // set bits for scale to 0
+		bits |= scale.to_bits(); // set bits for scale to their value
+
+		self.write_byte(0x10, bits)?;
+
+		// make sure we only change the stored value after setting it incase there was an issue with i2c
+		self.accel_scale = scale;
+
+		Ok(())
+	}
+
+	/// turn on/off the accelerometer and set the sample rate
+	pub fn set_accel_sample_rate(&mut self, sample_rate: AccelSampleRate) -> Result<(), I2C::Error> {
+		let mut bits = self.read_byte(0x10)?;
+		bits &= AccelSampleRate::INVERSE_BIT_MASK;
+		bits |= sample_rate.to_bits();
+
+		self.write_byte(0x10, bits)
+	}
+}
