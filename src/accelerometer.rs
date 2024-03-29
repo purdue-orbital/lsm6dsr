@@ -36,6 +36,17 @@ impl AccelScale {
 			_ => Self::Scale2,
 		}
 	}
+
+	/// get miliG/LSB
+	pub fn coefficient(self) -> f64 {
+		// from page 9
+		match self {
+			AccelScale::Scale2 => 0.061,
+			AccelScale::Scale4 => 0.122,
+			AccelScale::Scale8 => 0.244,
+			AccelScale::Scale16 => 0.488,
+		}
+	}
 }
 
 #[repr(u8)]

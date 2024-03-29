@@ -43,9 +43,11 @@ impl<I2C: I2c> Lsm6dsr<I2C> {
 		(temp / 16.0) + 25.0
 	}
 
-	// TODO: remove
-	/// NOTE: this is just temporary
-	pub fn raw_x_accel(&mut self)  -> Result<i16, I2C::Error> {
-		self.read_i16(0x28)
+	/// get acceleration in the x axis in Gs
+	pub fn x_accel(&mut self)  -> Result<f64, I2C::Error> {
+		let val = self.read_i16(0x28)? as f64;
+		let coeff = self.accel_scale.coefficient();
+
+		Ok(val * coeff / 1000.0)
 	}
 }
