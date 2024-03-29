@@ -81,4 +81,10 @@ impl<I2C: I2c> Lsm6dsr<I2C> {
 
 		Ok(())
 	}
+
+	// TODO: remove
+	/// NOTE: this is just temporary
+	pub fn raw_x_accel(&mut self)  -> Result<i16, I2C::Error> {
+		self.read_i16(0x28)
+	}
 }
