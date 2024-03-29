@@ -32,17 +32,12 @@ impl<I2C: I2c> Lsm6dsr<I2C> {
 	}
 
 	/// get temperature in degrees Celsius
+	/// 
+	/// NOTE: Incorrect output!!!
 	pub fn get_temp(&mut self) -> Result<f32, I2C::Error> {
-		let raw_temp = self.read_i16(0x20)?;
+		let raw_temp = self.read_i16(0x20)? as f32;
 
-		Ok(Self::convert_temp(raw_temp))
-	}
-
-	// TODO: verify
-	fn convert_temp(raw_temp: i16) -> f32 {
-		let temp = raw_temp as f32;
-
-		(temp / 256.0) + 25.0
+		Ok((raw_temp / 256.0) + 25.0)
 	}
 
 	/// get acceleration in the x axis in Gs
