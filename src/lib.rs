@@ -1,4 +1,4 @@
-use embedded_hal::i2c::{self, I2c};
+use embedded_hal::i2c::I2c;
 
 mod commands;
 pub mod accelerometer;
@@ -7,24 +7,21 @@ pub mod gyroscope;
 use accelerometer::AccelScale;
 use gyroscope::GyroScale;
 
-// pub use commands::*;
-
 #[derive(Debug)]
 pub struct Lsm6dsr<I2C> {
 	i2c: I2C,
 	accel_scale: AccelScale,
-	accel_filtering: bool, // page 51
 	gyro_scale: GyroScale,
 }
 
 impl<I2C: I2c> Lsm6dsr<I2C> {
 	const ADDRESS: u8 = 0x6A;
 	
+	/// NOTE: you must turn on the accelerometer and gyroscope by using `set_accel_sample_rate` and `set_gyro_sample_rate`
 	pub fn new(i2c: I2C) -> Self {
 		Self {
 			i2c,
 			accel_scale: AccelScale::Scale2,
-			accel_filtering: false,
 			gyro_scale: GyroScale::Scale250,
 		}
 	}

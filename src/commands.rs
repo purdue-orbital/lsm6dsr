@@ -1,4 +1,8 @@
-use super::*;
+use embedded_hal::i2c::I2c;
+
+use crate::Lsm6dsr;
+use crate::accelerometer::{AccelSampleRate, AccelScale};
+use crate::gyroscope::{GyroScale};
 
 impl<I2C: I2c> Lsm6dsr<I2C> {
 
@@ -27,13 +31,14 @@ impl<I2C: I2c> Lsm6dsr<I2C> {
 		self.write_byte(0x18, settings)
 	}
 
-	/// get temperature in degrees celcius
+	/// get temperature in degrees Celsius
 	pub fn get_temp(&mut self) -> Result<f32, I2C::Error> {
 		let raw_temp = self.read_i16(0x20)?;
 
 		Ok(Self::convert_temp(raw_temp))
 	}
 
+	// TODO: verify
 	fn convert_temp(raw_temp: i16) -> f32 {
 		let temp = raw_temp as f32;
 
@@ -80,6 +85,18 @@ impl<I2C: I2c> Lsm6dsr<I2C> {
 		self.gyro_scale = scale;
 
 		Ok(())
+	}
+
+	pub fn set_accel_sample_rate(&mut self, sample_rate: AccelSampleRate) -> Result<(), I2C::Error> {
+		let mut bits = self.read_byte(0x10)?;
+		bits &= AccelSampleRate::INVERSE_BIT_MASK;
+		bits |= sample_rate.to_bits();
+
+		self.write_byte(0x10, bits)
+	}
+
+	pub fn set_gyro_sample_rate(&mut self) -> Result<(), I2C::Error> {
+		todo!()
 	}
 
 	// TODO: remove

@@ -1,6 +1,9 @@
 slave address: 110101xb (where x represents hi/lo value of SDO/SA0 pin)
 				(7 bit address)
 
+OIS = optical image stablization
+ODR = operating data rate??? idk. it refers to how often it is sampling
+
 see page 53
 
 Accelerometer registers:
@@ -38,6 +41,7 @@ maybe important registers:
 important defaults:
 	XL_HM_MODE = 0 (in 15h) // accel default to hi perf mode
 	G_HM_MODE = 0 (in 16h) // gyro default to hi perf mode
+	ODR_XL[3:0] = 0000 (in 10h) // accel powered down
 	ODR_G[3:0] = 0000 (in 11h) // gyro powered down
 	I3C_disable = 0 // i3c default enabled
 	TIMESTAMP_EN = 0 // timestamping disabled
