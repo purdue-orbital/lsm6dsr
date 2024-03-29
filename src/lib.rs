@@ -64,6 +64,7 @@ impl<I2C: I2c> Lsm6dsr<I2C> {
 		self.i2c.write_read(Self::ADDRESS, &[register], read)
 	}
 
+	#[allow(dead_code)]
 	fn write_buf(&mut self, register: u8, write: &[u8]) -> Result<(), I2C::Error> {
 		// create a buf with the register as the first value
 		let mut buf = write.to_vec();
