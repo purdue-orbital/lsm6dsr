@@ -66,7 +66,7 @@ impl<I2C: I2c> Lsm6dsr<I2C> {
 		Ok(self.accel_scale.convert(raw_val))
 	}
 
-	/// get acceleration in all 3 axis. this is more efficient than
+	/// get acceleration in all 3 axis in Gs. this is more efficient than
 	/// getting each individually
 	pub fn acceleration(&mut self) -> Result<DVec3, I2C::Error> {
 		let raw_accel = self.read_trio_i16(0x28)?;
@@ -76,5 +76,17 @@ impl<I2C: I2c> Lsm6dsr<I2C> {
 		accel *= coeff / 1000.0;
 
 		Ok(accel)
+	}
+
+	/// get angular rate in all 3 axis in degrees per second. this is more efficient than
+	/// getting each individually
+	pub fn rotation(&mut self) -> Result<DVec3, I2C::Error> {
+		let raw_rot = self.read_trio_i16(0x22)?;
+		let mut rot = raw_rot.as_dvec3();
+		let coeff = self.gyro_scale.coefficient();
+
+		rot *= coeff / 1000.0;
+
+		Ok(rot)
 	}
 }
